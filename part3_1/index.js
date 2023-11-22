@@ -1,7 +1,16 @@
+const middleware = require('./middleware');
 const express = require('express')
+const morgan = require('morgan')
 const app = express()
 
 app.use(express.json())
+morgan.token('person', function (req, res) { return JSON.stringify(req.body) })
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :person', {
+    'skip': (req, res) => {
+        return req.method !== 'POST'
+    }
+} 
+))
 
 let persons = [
     { 
@@ -38,14 +47,12 @@ app.get('/', (request, response) => {
 })
 
 app.get('/api/persons', (request, response) => {
-    console.log("Requesting persons ", persons)
     response.json(persons)
 })
 
 app.get('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id);
     const person = persons.find(person => person.id === id);
-    console.log("Persons ", person)
     if (person) {
         response.json(person)
     } else {
