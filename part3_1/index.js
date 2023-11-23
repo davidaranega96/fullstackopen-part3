@@ -1,6 +1,5 @@
 const middleware = require('./middleware');
 const express = require('express')
-const morgan = require('morgan')
 const cors = require('cors')
 
 const app = express()
@@ -8,14 +7,7 @@ const app = express()
 app.use(cors())
 
 app.use(express.json())
-morgan.token('person', function (req, res) { return JSON.stringify(req.body) })
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms :person', {
-    'skip': (req, res) => {
-        return req.method !== 'POST'
-    }
-} 
-))
-app.use(morgan('tiny'))
+app.use(middleware.logPost)
 
 let persons = [
     { 
