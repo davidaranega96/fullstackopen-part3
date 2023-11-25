@@ -45,6 +45,16 @@ const AlreadyRemovedPersonNotification = (person) => {
     })
 }
 
+const PersonNotAddedNotification = (person, error) => {
+    return ({
+        ...BaseBadNotification,
+        message: `An error ocurred when adding ${person.name}. Error message: ${JSON.stringify(error.response.data)}`
+    })
+}
+
 export default {
-    PersonUpdateNotification, PersonAddedNotification, PersonDeletedNotification, BaseNotification, ErrorFetchingData, AlreadyRemovedPersonNotification
+    PersonUpdateNotification, PersonAddedNotification,
+    PersonDeletedNotification, BaseNotification,
+    ErrorFetchingData, AlreadyRemovedPersonNotification,
+    PersonNotAddedNotification
 }

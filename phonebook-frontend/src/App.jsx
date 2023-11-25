@@ -49,21 +49,29 @@ const App = () => {
       }
     }
     else {
-      PersonService.create(newPerson).then(returnedPerson => {setPersons(persons.concat(returnedPerson))});
-      setNotification(NotificationTool.PersonAddedNotification(newPerson))
+      PersonService.create(newPerson)
+      .then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson));
+        setNotification(NotificationTool.PersonAddedNotification(newPerson));
+      })
+      .catch(error => {
+        console.log("error creating person: ", error);
+        setNotification(NotificationTool.PersonNotAddedNotification(newPerson, error))
+      });
     }
   }
 
   const updatePerson = (UpdatedPerson) => {
     PersonService.
     update(UpdatedPerson.id, newPerson).
-    then(returnedPerson => setPersons(persons.map(
-      person => person.id !== UpdatedPerson.id ? person : returnedPerson
-    ))).
-    then(
-      setNotification(NotificationTool.PersonUpdateNotification(newPerson))
-    ).
-    catch(error => {
+    then(returnedPerson => {
+      setPersons(persons.map(
+        person => person.id !== UpdatedPerson.id ? person : returnedPerson
+        ));
+        setNotification(NotificationTool.PersonUpdateNotification(newPerson))
+      }
+    )
+    .catch(error => {
       console.log("Error updating person.");
       setNotification(NotificationTool.AlreadyRemovedPersonNotification(newPerson));
       fetchPersons();

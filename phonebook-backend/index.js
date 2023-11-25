@@ -1,3 +1,8 @@
+if (process.env.NODE_ENV === 'development') {
+    console.log("inside the requiere of dotenv")
+    require('dotenv').config();
+}
+const Person = require('./models/person');
 const middleware = require('./middleware');
 const express = require('express')
 const cors = require('cors')
@@ -32,36 +37,26 @@ let persons = [
     }
 ]
 
-const generateId = () => {
-    const maxNumber = 10**8
-    return (
-        Math.floor(Math.random() * maxNumber)
-    )
-}
-
 app.get('/', (request, response) => {
   response.send('<h1>Hello World!</h1>')
 })
 
 app.get('/api/persons', (request, response) => {
-    response.json(persons)
+    Person.find({}).then(result => {
+        response.json(result)
+      });
 })
 
 app.get('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id);
-    const person = persons.find(person => person.id === id);
-    if (person) {
+    Person.findById(request.params.id).then(person => {
         response.json(person)
-    } else {
-        response.status(404).end()
-    }
+    })
 })
 
 app.delete('/api/persons/:id', (request, response) => {
-    const idToDelete = Number(request.params.id)
-    persons = persons.filter(person => person.id !== idToDelete)
-    
-
+    Person.findByIdAndDelete(request.params.id).then(person => {
+        response.status(203).end()
+    })
     response.status(204).end()
 })
 
@@ -75,22 +70,14 @@ app.post('/api/persons', (request, response) => {
         })
     }
 
-    if (persons.find(person => person.name === body.name)) {
-        return response.status(400).json({
-            error: "person already in the phonebook"
-        })
-    }
-
-    const person = {
+    const person = new Person({
         name: body.name,
-        number: body.number,
-        id: generateId()
-    }
+        number: body.number
+    })
 
-    persons = persons.concat(person)
-
-    response.json(person)
-    
+    person.save().then(savedPerson => {
+        response.json(savedPerson)
+    })
 })
 
 const getCurrentDateTime = () => {
@@ -114,7 +101,7 @@ app.get('/info', (request, response) => {
     )
 })
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
