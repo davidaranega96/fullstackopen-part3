@@ -71,7 +71,7 @@ const App = () => {
     )
     .catch(error => {
       console.log("Error updating person. ", error);
-      setNotification(NotificationTool.AlreadyRemovedPersonNotification(newPerson));
+      setNotification(NotificationTool.PersonNotUpdatedNotification(newPerson, error));
       fetchPersons();
     })
   }

@@ -44,12 +44,6 @@ app.delete('/api/persons/:id', (request, response, next) => {
 
 app.post('/api/persons', (request, response, next) => {
     const body = request.body
-    if (!body.name || !body.number) {
-        return response.status(400).json({
-            error: "missing name or number"
-        })
-    }
-
     const person = new Person({
         name: body.name,
         number: body.number
@@ -64,9 +58,13 @@ app.post('/api/persons', (request, response, next) => {
 
 app.put('/api/persons/:id', (request, response, next) => {
     const body = request.body
-    update = { number: body.number }
+    update = { name: body.name, number: body.number }
 
-    Person.findByIdAndUpdate(request.params.id, update, { new: true })
+    Person.findByIdAndUpdate(
+        request.params.id,
+        update,
+        { new: true, runValidators: true,  context: 'query'}
+    )
     .then(person => {
         if (person) {
             return response.json(person).end();

@@ -2,6 +2,7 @@ if (process.env.NODE_ENV === 'development') {
   require('dotenv').config();
 }
 
+const validator = require('./validators.js')
 const url = process.env.DB_URL;
 const mongoose = require('mongoose')
 
@@ -10,8 +11,16 @@ console.log("Connectiong to ", url)
 mongoose.connect(url)
 
 const personSchema = new mongoose.Schema({
-    name: String,
-    number: String,
+    name: {
+      type: String,
+      minLength: 3,
+      required: true
+    },
+    number: {
+      type: String,
+      required: true,
+      validate: {validator: validator.validatePhoneNUmber}
+    }
   })
   
 const Person = mongoose.model('Person', personSchema)
