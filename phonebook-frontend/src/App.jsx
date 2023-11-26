@@ -31,9 +31,7 @@ const App = () => {
   const fetchPersons = () => {
     PersonService.
     getAll().
-    then(returnedPersons => {
-      setPersons(returnedPersons);
-    })
+    then(returnedPersons => setPersons(returnedPersons))
   }
 
   useEffect(() => {
@@ -42,10 +40,10 @@ const App = () => {
 
   const AddToPhonebook = async (event) => {
     event.preventDefault();
-    const already_in_phonebook = persons.find((person) => person.name === newPerson.name);
-    if (already_in_phonebook) {
+    const alreadyInPhonebook = persons.find((person) => person.name === newPerson.name);
+    if (alreadyInPhonebook) {
       if (window.confirm(ConfirmUpdatePersonMessage(newPerson))) {
-        updatePerson(already_in_phonebook);
+        updatePerson(alreadyInPhonebook);
       }
     }
     else {
@@ -61,18 +59,18 @@ const App = () => {
     }
   }
 
-  const updatePerson = (UpdatedPerson) => {
+  const updatePerson = (PersonToUpdate) => {
     PersonService.
-    update(UpdatedPerson.id, newPerson).
+    update(PersonToUpdate.id, newPerson).
     then(returnedPerson => {
       setPersons(persons.map(
-        person => person.id !== UpdatedPerson.id ? person : returnedPerson
+        person => person.id !== PersonToUpdate.id ? person : returnedPerson
         ));
         setNotification(NotificationTool.PersonUpdateNotification(newPerson))
       }
     )
     .catch(error => {
-      console.log("Error updating person.");
+      console.log("Error updating person. ", error);
       setNotification(NotificationTool.AlreadyRemovedPersonNotification(newPerson));
       fetchPersons();
     })

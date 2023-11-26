@@ -2,9 +2,7 @@ import axios from 'axios'
 const baseUrl = '/api/persons'
 
 const getAll = () => {
-  console.log(baseUrl)
   const request = axios.get(baseUrl)
-  console.log(request)
   return request.then(response => response.data)
 }
 

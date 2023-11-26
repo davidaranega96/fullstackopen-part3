@@ -1,11 +1,7 @@
 const morgan = require('morgan')
 
-const logMiddleware = (request, response, next) => {
-    console.log('Method:', request.method);
-    console.log('Path:  ', request.path);
-    console.log('Body:  ', request.body);
-    console.log('---');
-    next();
+const unknownEndpoint = (request, response, next) => {
+    response.status(404).send({ error: 'unknown endpoint' });
 }
 
 morgan.token('person', function (req, res) { return JSON.stringify(req.body) })
@@ -16,8 +12,22 @@ const logPost = morgan(':method :url :status :res[content-length] - :response-ti
     }
 })
 
+const baseLog = morgan(':method :url :status :res[content-length] - :response-time ms', {
+    'skip': (req, res) => {
+        return req.method === 'POST'
+    }
+})
+
+const errorHandling = (error, request, response, next) => {
+    console.error("Error handling the data ", error.message)
+    if (error.name === 'CastError') {
+        return response.status(400).send({ error: 'malformatted data' })
+      }
+    next(error)
+}
+
 module.exports = {
-    logMiddleware, logPost
+    logPost, baseLog, errorHandling, unknownEndpoint
 };
 
 
