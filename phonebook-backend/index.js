@@ -1,8 +1,8 @@
 if (process.env.NODE_ENV === 'development') {
-    require('dotenv').config();
+  require('dotenv').config()
 }
-const Person = require('./models/person');
-const middleware = require('./middleware');
+const Person = require('./models/person')
+const middleware = require('./middleware')
 const express = require('express')
 const cors = require('cors')
 
