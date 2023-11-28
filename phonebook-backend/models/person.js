@@ -1,14 +1,5 @@
-if (process.env.NODE_ENV === 'development') {
-  require('dotenv').config()
-}
-
 const validator = require('./validators.js')
-const url = process.env.DB_URL
 const mongoose = require('mongoose')
-
-mongoose.set('strictQuery',false)
-console.log('Connectiong to ', url)
-mongoose.connect(url)
 
 const personSchema = new mongoose.Schema({
   name: {
@@ -22,8 +13,6 @@ const personSchema = new mongoose.Schema({
     validate: { validator: validator.validatePhoneNUmber }
   }
 })
-
-/*const Person = mongoose.model('Person', personSchema)*/
 
 personSchema.set('toJSON', {
   transform: (document, returnedObject) => {
